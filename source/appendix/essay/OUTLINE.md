@@ -54,7 +54,7 @@
     - 「Javaのような構文」が求められていたためBrendan Eichは10日間で、Javaを参考にスクリプト言語を開発した
     - このときの実装ミスやDateなどの仕様は、今のJavaScriptにもそのまましようとして引き継がれている
     - その後、ECMAScriptという仕様を実装を元にECMAにおいて作成した
-    - JavaScriptという仕様ではないのは、JavaScriptはSunの商標でありSunはそれをdonateしなかったため https://twitter.com/BrendanEich/status/905677632225763328    
+    - JavaScriptという仕様ではないのは、JavaScriptはSunの商標でありSunはそれをdonateしなかったため https://twitter.com/BrendanEich/status/905677632225763328
 - DHTML、アプリケーションとしてのJavaScript
     - 目的: JavaScriptという言語がもつ役割が変化していることについて。これは今も変わっていってる
     - HTMLはドキュメントを扱うものであった
