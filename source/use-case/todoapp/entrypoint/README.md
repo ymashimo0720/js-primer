@@ -113,7 +113,7 @@ HTMLは表示されるがコンソールログに`index.js: loaded`が表示さ�
 
 #### [エラー例] `index.js`の読み込みに失敗している {#fail-to-load-javascript-module}
 
-`scirpt`要素の`src`属性指定した`index.js`のパスにファイルが存在しているかを確認してください。
+`script`要素の`src`属性指定した`index.js`のパスにファイルが存在しているかを確認してください。
 `<script type="module" src="index.js">`としてした場合は`index.html`と`index.js`は同じディレクトリに配置する必要があります。
 
 また、*CORS policy Invalid*のようなエラーがコンソールに表示されている場合は、[Same Origin Policy][]により`index.js`の読み込みが失敗しています。
@@ -151,7 +151,7 @@ todoapp
 
 
 `src/App.js`にファイルを作成し、次のような内容のJavaScriptモジュールとします。
-`App.js`は`App`というクラスを`export`しているモジュールです。
+`App.js`は`App`というクラスを名前付きエクスポートしているモジュールです。
 また、`App`クラスのコンストラクタにはコンソールログを出力するコードを確認用に書いておきます。
 
 [import, title:"src/App.js"](module-entry/src/App.js)
@@ -169,7 +169,7 @@ App.js: loaded
 App initialized
 ```
 
-まず`index.js`から`src/App.js`が`export`している`App`クラスをインポートしています。
+まず`index.js`から`src/App.js`が名前付きエクスポートしている`App`クラスを名前付きインポートしています。
 次に`App`クラスがインスタンス化されていることがログから確認できます。
 
 これでHTMLとJavaScriptそれぞれのエントリポイントの作成と動作を確認できました。

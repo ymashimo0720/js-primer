@@ -1,3 +1,9 @@
+sudo: required
+addons:
+  chrome: stable
+  apt:
+    packages:
+    - libgconf-2-4
 language: node_js
 env:
   global:
@@ -6,15 +12,20 @@ env:
     - GH_USER_NAME="azu"
 jobs:
   include:
-    # Unit Tests
-    - stage: test
-      name: "Unit Tests on Node.js 12"
-      node_js: '12'
-      script: npm run travis
-    # deploy
     - stage: deploy
       node_js: '12'
       if: branch = master AND type != pull_request
+      before_install:
+        # https://calibre-ebook.com/download_linux
+        # Install Calibre 3.33.1 that is hard coded in the shell script
+        - cat .travis/calibre-3-installer.sh | sudo sh /dev/stdin
+        - sudo ln -s /opt/calibre/ebook-convert /usr/local/bin/
+        # version check
+        - ebook-convert --version
+        # https://ipafont.ipa.go.jp/node26
+        - mkdir -p ~/.fonts
+        - cp ./resources/fonts/ipaexm00301/ipaexm.ttf ~/.fonts/ipaexm.ttf
+        - fc-cache -fv
       before_script:
         - |
 
@@ -24,7 +35,7 @@ jobs:
       script:
         - |
           npm run install:gitbook
-          $(npm bin)/update-branch --commands "npm run build" \
+          $(npm bin)/update-branch --commands "npm run build:all" \
                              --commit-message "Deploy GitBook build [skip ci]" \
                              --directory "_book" \
                              --distribution-branch "gh-pages" \

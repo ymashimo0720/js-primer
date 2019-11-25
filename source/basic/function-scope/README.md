@@ -208,6 +208,7 @@ console.log(element); // => ReferenceError: element is not defined
 一方、現在のスコープも含め、外側のどのスコープにも該当する変数が定義されていない場合は、`ReferenceError`の例外が発生します。
 次の例では、どのスコープにも存在しない`xyz`を参照しているため、`ReferenceError`の例外が発生します。
 
+{{book.console}}
 ```js
 {
     // OUTERブロックスコープ
@@ -927,7 +928,7 @@ function countUp() {
 }
 // 関数オブジェクトにプロパティとして値を代入する
 countUp.count = 0;
-// 呼び出すことにcountが更新される
+// 呼び出すごとにcountが更新される
 console.log(countUp()); // => 1
 console.log(countUp()); // => 2
 ```
@@ -944,7 +945,7 @@ function countUp() {
     return countUp.count;
 }
 countUp.count = 0;
-// 呼び出すことにcountが更新される
+// 呼び出すごとにcountが更新される
 console.log(countUp()); // => 1
 // 直接値を変更できてしまう
 countUp.count = 10;

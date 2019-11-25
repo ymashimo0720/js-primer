@@ -114,6 +114,7 @@ console.log(sparseArray[1]); // => undefined
 あるオブジェクトが配列かどうかを判定するには`Array.isArray`メソッドを利用します。
 `Array.isArray`メソッドは引数が配列ならば`true`を返します。
 
+{{book.console}}
 ```js
 const obj = {};
 const array = [];
@@ -130,8 +131,7 @@ const array = [];
 console.log(typeof array); // => "object"
 ```
 
-
-### [コラム] TypedArray {#typed-array}
+### [コラム] TypedArray<sup>[ES2015]</sup> {#typed-array}
 
 JavaScriptの配列は可変長のみですが、`TypedArray`という固定長でかつ型付きの配列を扱う別のオブジェクトが存在します。
 `TypedArray`はバイナリデータのバッファを示すために使われるデータ型で、WebGLやバイナリを扱う場面で利用されます。
@@ -147,7 +147,7 @@ console.log(Array.isArray(typedArray)); // => false
 
 そのため、JavaScriptで配列といった場合には`Array`を示します。
 
-## 配列と分割代入 {#array-destructuring}
+## [ES2015] 配列と分割代入 {#array-destructuring}
 
 配列の指定したインデックスの値を変数として定義し直す場合には、分割代入（Destructuring assignment）が利用できます。
 
@@ -210,7 +210,7 @@ console.log(sparseArray.hasOwnProperty(1)); // => false
 
 ### インデックスを取得 {#indexof}
 
-指定した要素が配列のどの位置にあるかを知りたい場合、`Array#indexOf`メソッドや`Array#findIndex`メソッドを利用します。
+指定した要素が配列のどの位置にあるかを知りたい場合、`Array#indexOf`メソッドや`Array#findIndex`メソッド<sup>[ES2015]</sup>を利用します。
 要素の位置のことを**インデックス**（`index`）と呼ぶため、メソッド名にも`index`という名前が入っています。
 
 次のコードでは、`Array#indexOf`メソッドを利用して、配列の中から`"JavaScript"`という文字列のインデックスを取得しています。
@@ -246,7 +246,7 @@ console.log(array.indexOf(obj)); // => 2
 このように、異なるオブジェクトだが値は同じものを見つけたい場合には、`Array#findIndex`メソッドが利用できます。
 `findIndex`メソッドは引数には配列の各要素をテストする関数をコールバック関数として渡します。
 `indexOf`メソッドとは異なり、テストする処理を自由に書くことができます。
-これにより、異なるオブジェクトだが値は同じという要素を配列から見つけて、その要素のインデックスを得ることができます。
+これにより、プロパティの値が同じ要素を配列から見つけて、その要素のインデックスを得ることができます。
 
 {{book.console}}
 ```js
@@ -272,7 +272,7 @@ console.log(colors[indexOfBlue]); // => { "color": "blue" }
 しかし、`findIndex`メソッドを使い要素を取得するケースでは、
 そのインデックスが欲しいのか、またはその要素自体が欲しいのかがコードとして明確ではありません。
 
-より明確に要素自体が欲しいということを表現するには、`Array#find`を使うことができます。
+より明確に要素自体が欲しいということを表現するには、`Array#find`メソッド<sup>[ES2015]</sup>を使うことができます。
 `find`メソッドは、`findIndex`メソッドと同様にテストする関数をコールバック関数として渡します。
 `find`メソッドの返り値は、要素そのものとなり、要素が存在しない場合は`undefined`を返します。
 
@@ -341,7 +341,7 @@ if (indexOfJS !== -1) {
 
 ```
 
-そこで、ES2015で導入された`Array#includes`メソッドを利用します。
+そこで、ES2016で導入された`Array#includes`メソッド<sup>[ES2016]</sup>を利用します。
 `Array#includes`メソッドは配列に指定要素が含まれているかを判定できます。
 `includes`メソッドは真偽値を返すので、`indexOf`メソッドを使った場合に比べて意図が明確になります。
 そのため、前述のコードは次のように`includes`メソッドを使うべきでしょう。
@@ -426,9 +426,37 @@ const newArray = array.concat("新しい要素");
 console.log(newArray); // => ["A", "B", "C", "新しい要素"]
 ```
 
+## [ES2015] 配列の展開 {#spread}
+
+`...`（Spread構文）をつかうことで、配列リテラル中に既存の配列を展開できます。
+
+次のコードでは、配列リテラルの末尾に配列を展開しています。
+これは、`Array#concat`メソッドで配列同士を結合するのと同じ結果になります。
+
+{{book.console}}
+```js
+const array = ["A", "B", "C"];
+// Spread構文を使った場合
+const newArray = ["X", "Y", "Z", ...array];
+// concatメソッドの場合
+const newArrayConcat = ["X", "Y", "Z"].concat(array);
+console.log(newArray); // => ["X", "Y", "Z", "A", "B", "C"]
+console.log(newArrayConcat); // => ["X", "Y", "Z", "A", "B", "C"]
+```
+
+Spread構文は、`concat`メソッドとは異なり、配列リテラル中の任意の位置に配列を展開できます。
+そのため、次のように要素の途中に配列を展開することも可能です。
+
+{{book.console}}
+```js
+const array = ["A", "B", "C"];
+const newArray = ["X", ...array, "Z"];
+console.log(newArray); // => ["X", "A", "B", "C", "Z"]
+```
+
 ## [ES2019] 配列をフラット化 {#flat}
 
-`Array#flat`メソッドを使うことで、多次元配列をフラットな配列に変換できます。
+`Array#flat`メソッド<sup>[ES2019]</sup>を使うことで、多次元配列をフラットな配列に変換できます。
 引数を指定しなかった場合は1段階のみのフラット化ですが、引数にわたす数値でフラット化する深さを指定できます。
 配列をすべてフラット化する場合には、無限を意味する`Infinity`を値として渡すことで実現できます。
 
@@ -479,12 +507,12 @@ array.splice(インデックス, 削除する要素数, ...追加する要素);
 
 {{book.console}}
 ```js
-const array = [1, 2, 3];
-// 1番目から1つの要素を削除
+const array = ["a", "b", "c"];
+// 1番目から1つの要素("b")を削除
 array.splice(1, 1);
-console.log(array); // => [1, 3]
+console.log(array); // => ["a", "c"]
 console.log(array.length); // => 2
-console.log(array[1]); // => 3
+console.log(array[1]); // => "c"
 // すべて削除
 array.splice(0, array.length);
 console.log(array.length); // => 0
@@ -530,13 +558,13 @@ console.log(array.length); // => 0
 
 これまで紹介してきた配列を変更するメソッドには、破壊的なメソッドと非破壊的メソッドがあります。この破壊的なメソッドと非破壊的メソッドの違いを知ることは、意図しない結果を避けるために重要です。
 破壊的なメソッドとは、配列オブジェクトそのものを変更し、変更した配列または変更箇所を返すメソッドです。
-非破壊的メソッドとは、配列オブジェクトのコピーを作成してから変更し、そのコピーの配列を返すメソッドです。
+非破壊的メソッドとは、配列オブジェクトのコピーを作成してから変更し、そのコピーした配列を返すメソッドです。
 
 <!-- 具体例:破壊的なメソッド -->
 
 破壊的なメソッドの例として、配列に要素を追加する`Array#push`メソッドがあります。
 `push`メソッドは、`myArray`の配列そのものへ要素を追加しています。
-その結果`myArray`の参照する配列が変更されるため破壊的なメソッドです。
+その結果`myArray`変数の参照する配列が変更されるため破壊的なメソッドです。
 
 {{book.console}}
 ```js
@@ -552,7 +580,7 @@ console.log(myArray); // => ["A", "B", "C", "D"]
 
 非破壊的なメソッドの例として、配列に要素を結合する`Array#concat`メソッドがあります。
 `concat`メソッドは、`myArray`をコピーした配列に対して要素を結合しその配列を返します。
-その結果`myArray`の参照する配列は変更されないため非破壊的なメソッドです。
+その結果`myArray`変数の参照する配列は変更されないため非破壊的なメソッドです。
 
 {{book.console}}
 ```js
@@ -568,7 +596,8 @@ console.log(myArray === newArray); // => false
 
 
 JavaScriptにおいて破壊的なメソッドと非破壊的メソッドを名前から見分ける方法はありません。
-また、返り値が配列の破壊的なメソッドもあるため、返り値からも判別できません。たとえば、`Array#sort`メソッドは返り値がソート済みの配列ですが破壊的です。
+また、配列を返す破壊的なメソッドもあるため、返り値からも判別できません。
+たとえば、`Array#sort`メソッドは返り値がソート済みの配列ですが破壊的メソッドです。
 
 次の表で紹介するメソッドは破壊的なメソッドです。
 
@@ -581,8 +610,8 @@ JavaScriptにおいて破壊的なメソッドと非破壊的メソッドを名�
 | [`Array.prototype.shift`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/shift) | 配列の先頭の値       |
 | [`Array.prototype.sort`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) | ソートした配列       |
 | [`Array.prototype.unshift`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift) | 変更後の配列のlength |
-| [`Array.prototype.copyWithin`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin) | 変更後の配列        |
-| [`Array.prototype.fill`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/fill) | 変更後の配列        |
+| [`Array.prototype.copyWithin`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin)<sup>[ES2015]</sup> | 変更後の配列        |
+| [`Array.prototype.fill`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/fill)<sup>[ES2015]</sup> | 変更後の配列        |
 
 
 破壊的メソッドは意図せぬ副作用を与えてしまうことがあるため、そのことを意識して利用する必要があります。
@@ -651,7 +680,7 @@ console.log(newArray); // => ["A", "C"]
 console.log(array); // => ["A", "B", "C"]
 ```
 
-このようにJavaScriptの配列には破壊的なメソッドと非破壊的メソッドが混在しています。そのため、統一的なインタフェースで扱えないのが現状です。
+このようにJavaScriptの配列には破壊的なメソッドと非破壊的メソッドが混在しています。そのため、統一的なインターフェースで扱えないのが現状です。
 このような背景もあるため、JavaScriptには配列を扱うためのさまざまライブラリが存在します。
 非破壊的な配列を扱うライブラリの例として[immutable-array-prototype][]や[Immutable.js][]などがあります。
 
@@ -727,7 +756,7 @@ console.log(array !== newArray); // => true
 ここまでで紹介した反復処理のメソッドとは異なり、コールバック関数には`累積値, 要素, インデックス, 配列`を引数として渡します。
 `reduce`メソッドの第二引数には`累積値`の初期値となる値を渡せます。
 
-次のコードでは、`reduce`メソッドは配列の各要素を加算した1つの数値を返します。
+次のコードでは、`reduce`メソッドは初期値を0として配列の各要素を加算した1つの数値を返します。
 つまり配列から配列要素の合計値というNumber型の値を返しています。
 
 {{book.console}}
@@ -783,7 +812,7 @@ function myFunc() {
 myFunc("a", "b", "c");
 ```
 
-Array-likeオブジェクトは配列のようで配列ではないというもどかしさをもつオブジェクトです。`Array.from`メソッドを使うことでArray-likeオブジェクトを配列に変換して扱うことができます。一度配列に変換してしまえばArrayメソッドも利用できます。
+Array-likeオブジェクトは配列のようで配列ではないというもどかしさをもつオブジェクトです。`Array.from`メソッド<sup>[ES2015]</sup>を使うことでArray-likeオブジェクトを配列に変換して扱うことができます。一度配列に変換してしまえばArrayメソッドも利用できます。
 
 {{book.console}}
 ```js

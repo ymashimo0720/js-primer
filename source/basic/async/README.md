@@ -347,7 +347,7 @@ function dummyFetch(path, successCallback, failureCallback) {
 [Promise][]はES2015で導入された非同期処理の結果を表現するビルトインオブジェクトです。
 
 エラーファーストコールバックは非同期処理を扱うコールバック関数の最初の引数にエラーオブジェクトを渡すというルールでした。
-`Promise`はこれを発展させたもので、単なるルールではなくオブジェクトという形にして非同期処理を統一的なインタフェースで扱うことを目的にしています。
+`Promise`はこれを発展させたもので、単なるルールではなくオブジェクトという形にして非同期処理を統一的なインターフェースで扱うことを目的にしています。
 
 `Promise`はビルトインオブジェクトであるためさまざまなメソッドを持ちますが、
 まずはエラーファーストコールバックと`Promise`での非同期処理のコード例を比較してみます。
@@ -717,7 +717,7 @@ console.log("1. 同期的な処理が実行されました");
 
 ### Promiseチェーン {#promise-chain}
 
-Promiseは非同期処理における統一的なインターフェイスを提供するビルトインオブジェクトです。
+Promiseは非同期処理における統一的なインターフェースを提供するビルトインオブジェクトです。
 Promiseによる統一的な処理方法は複数の非同期処理を扱う場合に特に効力を発揮します。
 これまでは、1つの`Promise`インスタンスに対して`then`や`catch`メソッドで1組のコールバック処理を登録するだけでした。
 
@@ -754,12 +754,12 @@ const firstPromise = Promise.resolve();
 const secondPromise = firstPromise.then(() => {
     console.log(1);
 });
-const thridPromise = secondPromise.then(() => {
+const thirdPromise = secondPromise.then(() => {
     console.log(2);
 });
 // それぞれ新しいPromiseインスタンスが作成される
 console.log(firstPromise === secondPromise); // => false
-console.log(secondPromise === thridPromise); // => false
+console.log(secondPromise === thirdPromise); // => false
 ```
 
 もう少し具体的なPromiseチェーンの例を見ていきましょう。
@@ -942,8 +942,23 @@ main().catch(error => {
 
 #### [ES2018] Promiseチェーンの最後に処理を書く {#promise-finally}
 
-`Promise#finally`メソッドは成功時、失敗時どちらの場合でも呼び出すコールバック関数を登録できます。
+`Promise#finally`メソッドは成功時、失敗時どちらの場合でも呼び出されるコールバック関数を登録できます。
 `try...catch...finally`構文の`finally`節と同様の役割をもつメソッドです。
+
+{{book.console}}
+<!-- doctest:meta:{ "ECMAScript": "2018" } -->
+```js
+// `promise`にはResolvedまたはRejectedなPromiseインスタンスがランダムで入る
+const promise = Math.random() < 0.5 ? Promise.resolve() : Promise.reject();
+promise.then(() => {
+    console.log("Promise#then");
+}).catch((error) => {
+    console.log("Promise#catch");
+}).finally(() => {
+    // 成功、失敗どちらの場合でも呼び出される
+    console.log("Promise#finally");
+});
+```
 
 次のコードでは、リソースを取得して`then`で成功時の処理、`catch`で失敗時の処理を登録しています。
 また、リソースを取得中かどうかを判定するためのフラグを`isLoading`という変数で管理しています。
@@ -951,7 +966,7 @@ main().catch(error => {
 `then`と`catch`の両方で`isLoading`へ`false`を代入できますが、`Promise#finally`メソッドを使うことで代入を一箇所にまとめられます。
 
 {{book.console}}
-<!-- doctest:disable -->
+<!-- doctest:meta:{ "ECMAScript": "2018" } -->
 ```js
 function dummyFetch(path) {
     return new Promise((resolve, reject) => {
@@ -969,12 +984,13 @@ let isLoading = true;
 dummyFetch("/resource/A").then(response => {
     console.log(response);
 }).catch(error => {
-    console.log(error);
+    console.error(error);
 }).finally(() => {
     isLoading = false;
     console.log("Promise#finally");
 });
 ```
+
 
 ### Promiseチェーンで逐次処理 {#promise-sequential}
 
@@ -1098,7 +1114,7 @@ const fetchedPromise = Promise.all([
 fetchedPromise.then(([responseA, responseB]) => {
     // この行は実行されません
 }).catch(error => {
-    console.log(error); // Error: NOT FOUND
+    console.error(error); // Error: NOT FOUND
 });
 ```
 
@@ -1161,7 +1177,7 @@ racePromise.then(value => {
 {{book.console}}
 <!-- doctest:options:{ "runMode": "any" } -->
 ```js
-// `timeoutMs`ミリ秒後にresolveする
+// `timeoutMs`ミリ秒後にrejectする
 function timeout(timeoutMs) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -1404,9 +1420,11 @@ asyncMain().catch(error => {
 ```
 
 `await`式がエラーを`throw`するということは、そのエラーは`try...catch`構文でキャッチできます（詳細は「[try...catch構文][]」の章を参照）。
-通常の非同期処理では完了する前に次の行が実行されてしまうため`try...catch`構文ではエラーをキャッチできませんでした。そのためPromiseでは`catch`メソッドを使いPromise内で発生したエラーをキャッチしていました。
+通常の非同期処理では完了する前に次の行が実行されてしまうため`try...catch`構文ではエラーをキャッチできませんでした。
+そのためPromiseでは`catch`メソッドを使いPromise内で発生したエラーをキャッチしていました。
 
 次のコードでは、`await`式で発生した例外を`try...catch`構文でキャッチしています。
+そのため、`asyncMain`関数はResolvedなPromiseを返し、`catch`メソッドのコールバック関数は呼び出されません。
 
 {{book.console}}
 ```js
@@ -1420,6 +1438,7 @@ async function asyncMain() {
         console.log(error.message); // => "エラーメッセージ"
     }
 }
+// asyncMainはResolvedなPromiseを返す
 asyncMain().catch(error => {
     // すでにtry...catchされているため、この行は実行されません
 });

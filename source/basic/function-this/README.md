@@ -39,7 +39,7 @@ description: "JavaScriptにおける`this`というキーワードの動作を�
 グローバルオブジェクトとは、実行環境において異なるものが定義されています。
 ブラウザなら`window`オブジェクト、Node.jsなら`global`オブジェクトとなります。
 
-ブラウザでは、`script`要素の`type`属性を指定してない場合は、実行コンテキストが"Script"として実行されます。
+ブラウザでは、`script`要素の`type`属性を指定していない場合は、実行コンテキストが"Script"として実行されます。
 この`script`要素の直下に書いた`this`はグローバルオブジェクトである`window`オブジェクトとなります。
 
 ```html
@@ -915,7 +915,7 @@ console.log(obj.method.call("THAT")); // => "THAT"
 コールバック関数における`this`はArrow Functionを使うことで分かりやすく解決できます。
 この背景にはArrow Functionで定義した関数は`this`を持たないという性質があります。
 
-[^1]: ES 2015の仕様編集者であるAllen Wirfs-Brock‏氏もただの関数においては`this`を使うべきではないと述べている。<https://twitter.com/awbjs/status/938272440085446657>;
+[^1]: ES2015の仕様編集者であるAllen Wirfs-Brock‏氏もただの関数においては`this`を使うべきではないと述べている。<https://twitter.com/awbjs/status/938272440085446657>;
 [JavaScriptとは]: ../introduction/README.md
 [関数と宣言]: ../function-declaration/README.md
 [クラス]: ../class/README.md

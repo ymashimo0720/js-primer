@@ -1,6 +1,6 @@
 # JavaScript Primer [![Build Status](https://travis-ci.org/asciidwango/js-primer.svg?branch=master)](https://travis-ci.org/asciidwango/js-primer)
 
-この書籍はES2015以降をベースとしたJavaScript入門書です。
+この書籍はES2015以降をベースとしたJavaScriptの入門書です。
 
 プログラミングをやったことがあるが、今のJavaScriptがよくわからないという人が、
 今のJavaScriptアプリケーションを読み書きできるようになる目的の書籍です。
@@ -31,7 +31,7 @@ Twitterのハッシュタグは [#jsprimer](https://twitter.com/intent/tweet?has
 
     npm install
 
-Node.js 8.2.0以上が必要です。
+Node.js 12.13.0以上が必要です。
 `npx`コマンドが利用できることを確認してください。
 
 ## Usage

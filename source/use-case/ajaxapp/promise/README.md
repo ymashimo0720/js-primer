@@ -23,10 +23,10 @@ function main() {
 }
 
 function fetchUserInfo(userId) {
-    fetch(`https://api.github.com/users/${userId}`)
+    fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
         .then(response => {
             if (!response.ok) {
-                console.error("サーバーエラー", response);
+                console.error("エラーレスポンス", response);
             } else {
                 return response.json().then(userInfo => {
                     // HTMLの組み立て
@@ -36,7 +36,7 @@ function fetchUserInfo(userId) {
                 });
             }
         }).catch(error => {
-            console.error("ネットワークエラー", error);
+            console.error(error);
         });
 }
 
@@ -70,25 +70,27 @@ function displayView(view) {
 Promiseチェーンの中で投げられたエラーは、`Promise#catch`メソッドを使って一箇所で受け取れます。
 
 次のコードでは、`fetchUserInfo`関数から返されたPromiseオブジェクトを、`main`関数でエラーハンドリングしてログを出力します。
-`fetchUserInfo`関数ではネットワークエラーとサーバーエラーを投げています。
-投げられたエラーは`catch`のコールバック関数で第1引数として受け取れます。
+`fetchUserInfo`関数の`catch`メソッドでハンドリングしていたエラーは、`main`関数の`catch`メソッドでハンドリングされます。
+一方、`Response#ok`で判定していた400や500などのエラーレスポンスがそのままでは`main`関数でハンドリングできません。
+そこで、`Promise.reject`メソッドを使い、RejectedなPromiseを返しPromiseチェーンをエラーの状態にします。
+その結果Promiseチェーンがエラーとなるため、`main`関数の`catch`でハンドリングできます。
 
 ```js
 function main() {
     fetchUserInfo("js-primer-example")
         .catch((error) => {
-            // Promiseのコンテキスト内で発生したエラーを受け取る
+            // Promiseチェーンの中で発生したエラーを受け取る
             console.error(`エラーが発生しました (${error})`);
         });
 }
 
 function fetchUserInfo(userId) {
     // fetchの戻り値のPromiseをreturnする
-    return fetch(`https://api.github.com/users/${userId}`)
+    return fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
         .then(response => {
             if (!response.ok) {
-                // サーバーエラーを投げる
-                throw new Error(`${response.status}: ${response.statusText}`);
+                // エラーレスポンスからRejectedなPromiseを作成して返す
+                return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
             } else {
                 return response.json().then(userInfo => {
                     // HTMLの組み立て
@@ -97,9 +99,6 @@ function fetchUserInfo(userId) {
                     displayView(view);
                 });
             }
-        }).catch(error => {
-            // ネットワークエラーを投げる
-            throw new Error("ネットワークエラー");
         });
 }
 ```
@@ -125,8 +124,8 @@ Promiseチェーンを使って処理を分割する利点は、同期処理と�
 Promiseチェーンで処理を分けることで、それぞれの処理が簡潔になりコードの見通しがよくなります。
 
 `index.js`の`fetchUserInfo`関数と`main`関数を次のように書き換えます。
-まず、`fetchUserInfo`関数が`Reponse#json`メソッドの戻り値をそのまま返すように変更します。
-`Reponse#json`メソッドの戻り値はJSONオブジェクトで解決されるPromiseなので、次の`then`ではユーザー情報のJSONオブジェクトが渡されます。
+まず、`fetchUserInfo`関数が`Response#json`メソッドの戻り値をそのまま返すように変更します。
+`Response#json`メソッドの戻り値はJSONオブジェクトで解決されるPromiseなので、次の`then`ではユーザー情報のJSONオブジェクトが渡されます。
 次に、`main`関数が`fetchUserInfo`関数のPromiseチェーンで、HTMLの組み立て（`createView`）と表示（`displayView`）を行うように変更します。
 
 ```js
@@ -143,16 +142,14 @@ function main() {
 }
 
 function fetchUserInfo(userId) {
-    return fetch(`https://api.github.com/users/${userId}`)
+    return fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error(`${response.status}: ${response.statusText}`);
+                return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
             } else {
                 // JSONオブジェクトで解決されるPromiseを返す
                 return response.json();
             }
-        }).catch(error => {
-            throw new Error("ネットワークエラー");
         });
 }
 ```

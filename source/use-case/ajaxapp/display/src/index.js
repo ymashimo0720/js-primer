@@ -1,8 +1,8 @@
 function fetchUserInfo(userId) {
-    fetch(`https://api.github.com/users/${userId}`)
+    fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
         .then(response => {
             if (!response.ok) {
-                console.error("サーバーエラー", response);
+                console.error("エラーレスポンス", response);
             } else {
                 return response.json().then(userInfo => {
                     // HTMLの組み立て
@@ -22,7 +22,7 @@ function fetchUserInfo(userId) {
                 });
             }
         }).catch(error => {
-            console.error("ネットワークエラー", error);
+            console.error(error);
         });
 }
 
